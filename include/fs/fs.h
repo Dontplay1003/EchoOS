@@ -1,3 +1,4 @@
+#pragma once
 #define DISK_INFO_BASE 0x120000000
 #define FILE_INFO_BASE 0x122000000
 #define FILE_BASE      0x124000000
@@ -21,7 +22,7 @@ void* fs_info_malloc(int size);
 void* fs_malloc(int size);
 
 void create_folder(struct file_folder *relative_path, char folder_name[]);
-void create_file(struct file_folder *relative_path, char file_name[]);
+int create_file(struct file_folder *relative_path, char file_name[]);
 void del_folder(struct file_folder *relative_path, char folder_name[]);
 void del_file(struct file_folder *relative_path, char file_name[]);
 void *path_als(char path[],int type);

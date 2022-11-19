@@ -3,3 +3,4 @@
 *.rom
 /build
 *.img
+/.vscode

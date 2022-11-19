@@ -7,6 +7,7 @@
 #include "cpu/ls7a.h"
 #include "boot/boot_param.h"
 #include "fs/fs.h"
+#include "app/vim.h"
 
 int enable_shell = 0;
 int handle_cmd_flag = 0;
@@ -29,7 +30,7 @@ void show_help()
     puts("\tbootparam: show boot parameter\n");
 }
 
-void shell_buf_update(char c, int state){
+void shell_buf_update(char c, int state, int kbd_n){
     if(enable_shell == 0) return;
     if(state == KEY_PUSH){
         if(c == '\n'){
@@ -83,6 +84,16 @@ int handle_cmd(int a0, char **args, struct bootparamsinterface *a2){
         printf("shell has exited!");
         handle_cmd_flag = 0;
         return -1;
+    }
+    else if(strcmp(cmd, "clear") == 0){
+        //printf("12345678901234567890");
+        //printf("\e[H\e[2J");
+        printf("\ec");
+        //for(int i=0;i<10;i++) putc(1);
+        //for(int i=0;i<10000;i++) printf(" ");
+        //for(int i=0;i<10000;i++) printf("\b");
+        handle_cmd_flag = 0;
+        return 1;
     }
     else if (strcmp(cmd, "memmap") == 0){
         print_memmap();
@@ -189,6 +200,24 @@ int handle_cmd(int a0, char **args, struct bootparamsinterface *a2){
         //     printf("%s",result[j++]);
         // }
         create_file(path,&cmd_content[i]);
+        handle_cmd_flag = 0;
+        return 1;
+    }
+    else if (strcmp(cmd, "vim") == 0){
+        struct file_folder *path = (struct file_folder *)path_als(shell_path, 0);
+        char result[100][100]={0};
+        int result_len = 0;
+        split(cmd_content," ",result,&result_len);
+        //split("hxx/gyw/hx/lc","/",result,&result_len);
+        if(result_len<=1){
+            printf("invalid parameter!\n");
+            handle_cmd_flag = 0;
+            return 0;
+        }
+        enable_shell = 0;
+        vim_entry(path,&cmd_content[i]);
+        clear_screen();
+        enable_shell = 1;
         handle_cmd_flag = 0;
         return 1;
     }

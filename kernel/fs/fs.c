@@ -40,7 +40,7 @@ void create_folder(struct file_folder *relative_path, char folder_name[]){
     }
 }
 
-void create_file(struct file_folder *relative_path, char file_name[]){
+int create_file(struct file_folder *relative_path, char file_name[]){
     int list_n=-1;
     for(int i=0;i<16;i++){
         if(relative_path->file_list[i] == 0){
@@ -50,7 +50,7 @@ void create_file(struct file_folder *relative_path, char file_name[]){
     }
     if(list_n==-1){
         printf("Number of file is up to max!\n");
-        return;
+        return -1;
     }
     relative_path->file_list[list_n] = (struct file_info*)fs_info_malloc(sizeof(struct file_info));
     if(relative_path->file_list[list_n] == 0) printf("No room to create file!\n");
@@ -59,11 +59,12 @@ void create_file(struct file_folder *relative_path, char file_name[]){
     relative_path->file_list[list_n]->file_size = 4*1024*sizeof(char);
     char split_res[100][100];
     int split_res_n = 0;
-    printf("%p\n%p\n",&split_res[0][0],&split_res[1][1]);
+    //printf("%p\n%p\n",&split_res[0][0],&split_res[1][1]);
     split(file_name,".",split_res,&split_res_n);
     //printf("----11111****\n");
     //printf("%x\n\n",relative_path->file_list[list_n]->file_p);
     strcpy(relative_path->file_list[list_n]->file_type,split_res[split_res_n-1]);
+    return list_n;
 }
 
 void del_folder(struct file_folder *relative_path, char folder_name[]){

@@ -115,6 +115,7 @@ char kbd_US[128] =
         0, /* All other keys are undefined */
 };
 
+
 char kbd_US_up[128] =
     {
         0, 27, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 0,

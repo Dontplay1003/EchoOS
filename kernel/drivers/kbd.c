@@ -2,6 +2,7 @@
 #pragma GCC diagnostic ignored "-Wimplicit-function-declaration" //正式开发建议删除此行
 #include "drivers/kbd.h"
 #include "shell/shell.h"
+#include "app/vim.h"
 
 //char kbd_buf[KBD_BUF_SIZE];
 //unsigned int kbd_start_ptr = 0;
@@ -23,7 +24,7 @@ int kbd_event_register(void* f_entry){
     return kbd_callback_table_num-1;
 }
 
-int kbd_event_invoke(char issue_c, int key_state){
+int kbd_event_invoke(char issue_c, int key_state, int kbd_n){
     int kbd_event_num = kbd_callback_table_num;
     for(int i=0;i<kbd_event_num;i++){
         //(kbd_callback_table[i])(kbd_buf[(kbd_end_ptr-1)%KBD_BUF_SIZE]);
@@ -65,7 +66,8 @@ unsigned char kbd_irq(){
     }
     
     //kbd_event_invoke(issue_c, kbd_status[kbd_n]);
-    shell_buf_update(issue_c, kbd_status[kbd_n]);
+    shell_buf_update(issue_c, kbd_status[kbd_n], kbd_n);
+    vim_input_handle(issue_c, kbd_status[kbd_n], kbd_n);
     
     //printf("key done\n");
 }

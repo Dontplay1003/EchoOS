@@ -5,4 +5,4 @@ int strcpy(char *dst, const char *src);
 int strlen(const char *str);
 int strncmp(const char *str1, const char *str2, int n);
 int strncpy(char *dst, const char *src, int n);
-void split(char *str, char *delim, char **result, int *result_len);
+void split(char *str, char *delim, char result[][100], int *result_len);

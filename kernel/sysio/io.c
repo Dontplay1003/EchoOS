@@ -114,7 +114,7 @@ void printf(char *fmt, ...)
 
 // char getc()
 // {
-//     while(kbd_start_ptr==(kbd_end_ptr-1)%KBD_BUF_SIZE);
-//     char c = kbd_buf[(kbd_end_ptr-1)%KBD_BUF_SIZE];
-//     return c;
+//   // wait for Transmit Holding Empty to be set in LSR.
+//   while ((io_readb(UART0_LSR) & LSR_TX_IDLE) == 0);
+//   return io_readb(UART0_THR);
 // }

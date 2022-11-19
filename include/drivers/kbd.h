@@ -14,5 +14,5 @@ enum{
 //typedef void (*kbd_callback_table)(char*)[KBD_CALLBACK_TABLE];
 
 int kbd_event_register(void *f_entry);
-int kbd_event_invoke(char issue_c, int key_state);
+int kbd_event_invoke(char issue_c, int key_state, int kbd_n);
 unsigned char kbd_irq();

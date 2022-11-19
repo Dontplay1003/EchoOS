@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __ECHO_OS_io_h_
 #define __ECHO_OS_io_h_
 

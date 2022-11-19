@@ -1,2 +1,2 @@
 # EchoOS
-my first OS
+my first loongarch OS

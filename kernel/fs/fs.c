@@ -52,17 +52,23 @@ int create_file(struct file_folder *relative_path, char file_name[]){
         printf("Number of file is up to max!\n");
         return -1;
     }
-    relative_path->file_list[list_n] = (struct file_info*)fs_info_malloc(sizeof(struct file_info));
-    if(relative_path->file_list[list_n] == 0) printf("No room to create file!\n");
-    strcpy(relative_path->file_list[list_n]->file_name,file_name);
-    relative_path->file_list[list_n]->file_p = (char*)fs_malloc(4*1024*sizeof(char));
-    relative_path->file_list[list_n]->file_size = 4*1024*sizeof(char);
     char split_res[100][100];
     int split_res_n = 0;
     //printf("%p\n%p\n",&split_res[0][0],&split_res[1][1]);
     split(file_name,".",split_res,&split_res_n);
     //printf("----11111****\n");
     //printf("%x\n\n",relative_path->file_list[list_n]->file_p);
+    if(split_res_n<2){
+        printf("File name error!\n");
+        return -1;
+    }
+
+    relative_path->file_list[list_n] = (struct file_info*)fs_info_malloc(sizeof(struct file_info));
+    if(relative_path->file_list[list_n] == 0) printf("No room to create file!\n");
+    strcpy(relative_path->file_list[list_n]->file_name,file_name);
+    relative_path->file_list[list_n]->file_p = (char*)fs_malloc(4*1024*sizeof(char));
+    relative_path->file_list[list_n]->file_size = 4*1024*sizeof(char);
+    
     strcpy(relative_path->file_list[list_n]->file_type,split_res[split_res_n-1]);
     return list_n;
 }
@@ -70,7 +76,7 @@ int create_file(struct file_folder *relative_path, char file_name[]){
 void del_folder(struct file_folder *relative_path, char folder_name[]){
     int list_n=-1;
     for(int i = 0;i<16;i++){
-        if(relative_path->file_folder_list[i]!=0 && strcmp(folder_name,relative_path->file_folder_list[i]->file_folder_name)){
+        if(relative_path->file_folder_list[i]!=0 && (strcmp(folder_name,relative_path->file_folder_list[i]->file_folder_name)==0)){
             list_n = i;
             break;
         }
@@ -85,7 +91,7 @@ void del_folder(struct file_folder *relative_path, char folder_name[]){
 void del_file(struct file_folder *relative_path, char file_name[]){
     int list_n=-1;
     for(int i = 0;i<16;i++){
-        if(relative_path->file_list[i]->file_p!=0 && strcmp(file_name,relative_path->file_list[i]->file_name)){
+        if(relative_path->file_list[i]->file_p!=0 && (strcmp(file_name,relative_path->file_list[i]->file_name)==0)){
             list_n = i;
             break;
         }
@@ -110,7 +116,7 @@ void *path_als(char path[],int type){ // 0 folder 1 file 2 folder of file
     while(i<depth-1){
         int list_n = -1;
         for(int j=0;j<16;j++){
-            if(dst_p->file_folder_list[j]!=0 && strcmp(split_path[i],dst_p->file_folder_list[j]->file_folder_name)){
+            if(dst_p->file_folder_list[j]!=0 && (strcmp(split_path[i],dst_p->file_folder_list[j]->file_folder_name)==0)){
                 list_n = j;
                 break;
             }
@@ -126,7 +132,7 @@ void *path_als(char path[],int type){ // 0 folder 1 file 2 folder of file
     if(type == 0){
         int list_n = -1;
         for(int j=0;j<16;j++){
-            if(dst_p->file_list[j]->file_p!=0 && strcmp(split_path[i],dst_p->file_list[j]->file_name)){
+            if(dst_p->file_list[j]->file_p!=0 && (strcmp(split_path[i],dst_p->file_list[j]->file_name)==0)){
                 list_n = j;
                 break;
             }
@@ -140,7 +146,7 @@ void *path_als(char path[],int type){ // 0 folder 1 file 2 folder of file
     else if(type == 1 || type == 2){
         int list_n = -1;
         for(int j=0;j<16;j++){
-            if(dst_p->file_list[j]->file_p!=0 && strcmp(split_path[i],dst_p->file_list[j]->file_name)){
+            if(dst_p->file_list[j]->file_p!=0 && (strcmp(split_path[i],dst_p->file_list[j]->file_name)==0)){
                 list_n = j;
                 break;
             }
@@ -174,7 +180,7 @@ void move_file(char dst[],char src[]){
     }
 
     for(int j=0;j<16;j++){
-        if(src_p != 0 && strcmp(src_folder_p->file_list[j]->file_name, src_p->file_name)){
+        if(src_p != 0 && (strcmp(src_folder_p->file_list[j]->file_name, src_p->file_name)==0)){
             src_folder_p->file_list[j]->file_p = 0;
             break;
         }
@@ -202,7 +208,7 @@ void move_folder(char dst[],char src[]){
     }
 
     for(int j=0;j<16;j++){
-        if(src_p!=0 && strcmp(src_folder_p->file_list[j]->file_name, src_p->file_folder_name)){
+        if(src_p!=0 && (strcmp(src_folder_p->file_list[j]->file_name, src_p->file_folder_name)==0)){
             src_folder_p->file_folder_list[j] = 0;
             break;
         }

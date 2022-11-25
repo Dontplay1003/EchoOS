@@ -216,7 +216,6 @@ int handle_cmd(int a0, char **args, struct bootparamsinterface *a2){
         }
         enable_shell = 0;
         vim_entry(path,&cmd_content[i]);
-        clear_screen();
         enable_shell = 1;
         handle_cmd_flag = 0;
         return 1;

@@ -1,5 +1,6 @@
-#pragma GCC diagnostic ignored "-Wimplicit-function-declaration" //正式开发建议删除此行
+#include "boot/boot_param.h"
 #include "mm/mm.h"
+#include "mm/buddy.h"
 
 const struct loongsonlist_mem_map mem_map_list = {
     {0, 0, 0, 0},
@@ -21,22 +22,52 @@ const struct loongsonlist_mem_map mem_map_list = {
         {(u32)1, (u64)0xfeb60000, (u64)0x003b0000},
         {(u32)1, (u64)0xfff90000, (u64)0x00050000}}};
 
-void print_memmap(){
-    printf("map_count : %d\n",mem_map_list.map_count);
-    for(int i=0;i<mem_map_list.map_count;i++){
-        printf("\tmem_type:%d ; mem_start:%d ; mem_size:%d\n",mem_map_list.map[i].mem_type,
-                mem_map_list.map[i].mem_start,mem_map_list.map[i].mem_size);
-    }
+void mem_init()
+{
+    mm_info("Initializing memory manager...");
+    init_buddy();
 }
 
-long long mem_alloc_start;
-void* malloc(int size){
-    void *p = mem_alloc_start;
-    mem_alloc_start+=size;
-    if(mem_alloc_start>0x100000000) return 0;
-    return p;
+void set_dead_beef(void *addr)
+{
+    u32 *p = (u32 *)addr - 3;
+    *p = 0xdeadbeef;
 }
 
-void mem_init(){
-    mem_alloc_start = 120000000;
+int check_dead_beef(void *addr)
+{
+    u32 *p = (u32 *)addr - 3;
+    return *p == 0xdeadbeef;
 }
+
+// void mem_block_add(u64 mem_start, u64 mem_size)
+// {
+//     if (mem_size < PAGE_SIZE)
+//         return;
+//     u64 start = mem_start / PAGE_SIZE;
+//     u64 end = (mem_start + mem_size) / PAGE_SIZE;
+//     if (end > MAX_SPACE / PAGE_SIZE)
+//         end = MAX_SPACE / PAGE_SIZE;
+//     for (u64 i = start; i < end; i++)
+//     {
+//         bitmap[i / 64] |= (1UL << (i % 64));
+//     }
+// }
+
+// void mem_block_init(struct loongsonlist_mem_map *mem_map)
+// {
+//     u32 mem_type;
+//     u64 mem_start, mem_end, mem_size;
+
+//     for (int i = 0; i <= mem_map->map_count; i++)
+//     {
+//         mem_type = mem_map->map[i].mem_type;
+//         mem_start = mem_map->map[i].mem_start;
+//         mem_size = mem_map->map[i].mem_size;
+//         mem_end = mem_start + mem_size;
+//         if (SYSTEM_RAM == mem_type)
+//         {
+//             mem_block_add(mem_start, mem_size);
+//         }
+//     }
+// }

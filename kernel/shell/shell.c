@@ -2,7 +2,8 @@
 #include "shell/shell.h"
 #include "sysio/io.h"
 #include "drivers/kbd.h"
-#include "util/util.h"
+#include "utils/mem.h"
+#include "utils/string.h"
 #include "cpu/loongarch.h"
 #include "cpu/ls7a.h"
 #include "boot/boot_param.h"
@@ -89,9 +90,6 @@ int handle_cmd(int a0, char **args, struct bootparamsinterface *a2){
         //printf("12345678901234567890");
         //printf("\e[H\e[2J");
         printf("\ec");
-        //for(int i=0;i<10;i++) putc(1);
-        //for(int i=0;i<10000;i++) printf(" ");
-        //for(int i=0;i<10000;i++) printf("\b");
         handle_cmd_flag = 0;
         return 1;
     }

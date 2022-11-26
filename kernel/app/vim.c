@@ -1,6 +1,7 @@
 #include "app/vim.h"
 #include "sysio/io.h"
-#include "util/util.h"
+#include "utils/mem.h"
+#include "utils/string.h"
 #include "drivers/kbd.h"
 #include "cpu/loongarch.h"
 
@@ -18,7 +19,7 @@ void clear_screen(){
 }
 
 void print2screen(int offset){
-    clear_screen();
+    //clear_screen();
     for(int i=0+offset;i<25;i++){
         for(int j=0;j<80;j++){
             if(file_copy[i][j]!=1) printf("%c",file_copy[i][j]);
@@ -164,7 +165,6 @@ int vim_entry(struct file_folder *relative_path, char *file_name){
 
         while(1){
             if(exit_flag == 1) break;
-            printf("");
         }
 
         enable_vim = 0;

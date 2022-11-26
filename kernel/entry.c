@@ -72,6 +72,8 @@ void kernel_entry(int a0, char **args, struct bootparamsinterface *a2)
     print_info();
     entry_shell(a0, args, a2);
     //sata_init();
-
-    while(1);
+    int xx;
+    while(1){
+        xx++;
+    }
 }

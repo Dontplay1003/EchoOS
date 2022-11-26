@@ -1,4 +1,5 @@
-#include "util/util.h"
+#include "utils/mem.h"
+#include "utils/string.h"
 #include "sysio/io.h"
 #include "boot/boot_param.h"
 #define MAX_PACKAGES 16

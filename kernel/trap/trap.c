@@ -124,6 +124,8 @@ void trap_entry(){
     : : : );
 }
 
+int keyboard_trap_fix_flag=0;
+
 void trap_handler(void)
 {
     intr_off();
@@ -143,6 +145,7 @@ void trap_handler(void)
 
     if (estat & ecfg & TI_VEC) {
         timer_interrupt();
+        //trap_init();
     } 
     else if (estat & ecfg & HWI_VEC) {
         // hardware interrupt
@@ -180,14 +183,15 @@ void trap_handler(void)
 void trap_init(void)
 {
     unsigned int ecfg = ( 0U << CSR_ECFG_VS_SHIFT ) | HWI_VEC | TI_VEC;
-    //unsigned long tcfg = 0x0a000000UL | CSR_TCFG_EN | CSR_TCFG_PER;
+    unsigned long tcfg = 0x0a000000UL | CSR_TCFG_EN | CSR_TCFG_PER;
     w_csr_ecfg(ecfg);
-    //w_csr_tcfg(tcfg);
+    w_csr_tcfg(tcfg);
     w_csr_eentry((unsigned long)trap_entry);
     //printf(" trap entry address : %x \n",trap_entry);
 
     extioi_init(); //拓展io中断初始化
     ls7a_intc_init(); //桥片初始化
     i8042_init(); //键鼠控制芯片初始化
+
     intr_on(); //开中断
 }

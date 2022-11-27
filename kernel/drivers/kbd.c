@@ -66,8 +66,9 @@ unsigned char kbd_irq(){
     }
     
     //kbd_event_invoke(issue_c, kbd_status[kbd_n]);
-    shell_buf_update(issue_c, kbd_status[kbd_n], kbd_n);
     vim_input_handle(issue_c, kbd_status[kbd_n], kbd_n);
+    shell_buf_update(issue_c, kbd_status[kbd_n], kbd_n);
+    
     
     //printf("key done\n");
 }

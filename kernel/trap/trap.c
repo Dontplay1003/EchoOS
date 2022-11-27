@@ -21,20 +21,11 @@ extern int kbd_has_data(void);
 
 void timer_interrupt(void)
 {
-#if 0
-    int i = 0;
-    unsigned char data;
-
-    do {
-        data = kbd_read_byte();
-        printf("%x ", data);
-    } while (data != 0xff && i++ < 32);
-
-    printf("\n");
-#else
+    while (kbd_has_data()){
+        kbd_read_byte();
+    }
     //printf("timer interrupt\n");
     time_n += 1;
-#endif
     /* ack */
     w_csr_ticlr(r_csr_ticlr() | CSR_TICLR_CLR);
 }
@@ -170,8 +161,8 @@ void trap_handler(void)
 
     }
     else {
-        printf("unexpected interrupt\n");
-        while (1);
+        //printf("unexpected interrupt\n");
+        //while (1);
     }
 
     // restore era

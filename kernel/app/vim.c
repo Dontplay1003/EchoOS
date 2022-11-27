@@ -19,7 +19,7 @@ void clear_screen(){
 }
 
 void print2screen(int offset){
-    //clear_screen();
+    clear_screen();
     for(int i=0+offset;i<25;i++){
         for(int j=0;j<80;j++){
             if(file_copy[i][j]!=1) printf("%c",file_copy[i][j]);
@@ -31,8 +31,11 @@ void save_file(){
     char *text_p = vim_file->file_p;
     for(int i=0;i<1000;i++){
         for(int j=0;j<80;j++){
-            *text_p = file_copy[i][j];
-            text_p++;
+            if(file_copy[i][j]!=0 && file_copy[i][j]!=1){
+                *text_p = file_copy[i][j];
+                text_p++;
+            }
+            else continue;
         }
     }
 }
@@ -40,6 +43,7 @@ void save_file(){
 void vim_input_handle(char c, int state, int kbd_n){
     //printf("%d\n",enable_vim);
     if(enable_vim == 0) return;
+    printf("");
     if(state == KEY_PUSH){
         if(kbd_n == KEY_ESC){
             enable_vim = 0;
@@ -47,7 +51,7 @@ void vim_input_handle(char c, int state, int kbd_n){
             exit_flag = 1;
             return;
         }
-        else if(kbd_n == KEY_UP){
+        else if(kbd_n == 72){
             printf("\e[1A");
             if(c_y>3){
                 c_y--;
@@ -60,7 +64,7 @@ void vim_input_handle(char c, int state, int kbd_n){
                 c_y--;
             }
         }
-        else if(kbd_n == KEY_DOWN){
+        else if(kbd_n == 80){
             printf("\e[1B");
             if(c_y<22){
                 c_y++;
@@ -73,7 +77,7 @@ void vim_input_handle(char c, int state, int kbd_n){
                 c_y++;
             }
         }
-        else if(kbd_n == KEY_RIGHT){
+        else if(kbd_n == 77){
             printf("\e[1C");
             if(c_x<79) c_x++;
             else if(file_copy[c_y+offset+1][0]==1){
@@ -81,7 +85,7 @@ void vim_input_handle(char c, int state, int kbd_n){
                 printf("\e[80D");
             }
         }
-        else if(kbd_n == KEY_LEFT){
+        else if(kbd_n == 75){
             printf("\e[1D");
             if(c_x>0) c_x--;
         }
@@ -92,7 +96,7 @@ void vim_input_handle(char c, int state, int kbd_n){
                 c_y++;
                 c_x=0;
             }
-            if(c_x<25)c_x++;
+            if(c_x<80)c_x++;
             else{
                 c_x=0;
                 c_y++;
@@ -102,6 +106,8 @@ void vim_input_handle(char c, int state, int kbd_n){
     //printf("\e[s");
     print2screen(offset);
     //printf("\e[u");
+    if(c_y==0)printf("\033[%d;%dH", c_y+1, c_x+1);
+    else printf("\033[%d;%dH", c_y+1, c_x);
     return;
 }
 
@@ -165,6 +171,7 @@ int vim_entry(struct file_folder *relative_path, char *file_name){
 
         while(1){
             if(exit_flag == 1) break;
+            printf("");
         }
 
         enable_vim = 0;

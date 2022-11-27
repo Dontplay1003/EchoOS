@@ -17,15 +17,15 @@ extern void trap_init(void);
 void kernel_entry(int a0, char **args, struct bootparamsinterface *a2)
 {
 
-    char *p=0x04000000;
-    while(p<0x04000100){
-        //*p = 'h';
-        p+=1;
-        printf("%x ",p);
-        printf("%c\n",*p);
-    }
-    //printf("finish\n");
-    while(1);
+    // char *p=0x04000000;
+    // while(p<0x04000100){
+    //     //*p = 'h';
+    //     p+=1;
+    //     printf("%x ",p);
+    //     printf("%c\n",*p);
+    // }
+    // //printf("finish\n");
+    // while(1);
     //while(1)printf("end");
 
     //printf("%p\n",&a0);

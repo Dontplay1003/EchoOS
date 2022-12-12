@@ -228,31 +228,45 @@ void switch_to(struct task_struct *prev, struct task_struct *next)
 	//保存当前进程的prmd, ra
 	asm volatile(
 		"csrrd %0, 0x0\n" 
-		"add.d %0, ra, r0\n"
-		
-	: "=r"(prev->tss.csr_prmd));
-	asm volatile("csrrd %0, 0x0\n" : "=r"(prev->tss.csr_prmd));
-	asm volatile("add.d %0, ra, r0\n" : "=r"(prev->tss.reg01));
-	//保存当前进程的a0-a1
-	asm volatile("add.d %0, a0, r0\n" : "=r"(prev->tss.reg04));
-	asm volatile("add.d %0, a1, r0\n" : "=r"(prev->tss.reg05));
-	//保存当前进程的tp
-	asm volatile("add.d %0, tp, r0\n" : "=r"(prev->tss.reg02));
-	//保存当前进程的sp
-	asm volatile("add.d %0, sp, r0\n" : "=r"(prev->tss.reg03));
+		"add.d %1, ra, r0\n"
+		"add.d %2, a0, r0\n"
+		"add.d %3, a1, r0\n"
+		"add.d %4, tp, r0\n"
+		"add.d %5, sp, r0\n"
+		"csrrd %6, 0x0\n"
+		"add.d ra, %7, r0\n"
+		"add.d a0, %8, r0\n"
+		"add.d a1, %9, r0\n"
+		"add.d tp, %10, r0\n"
+		"add.d sp, %11, r0\n"
+		"jr ra\n"
+		"nop\n"
+		: "=r"(prev->tss.csr_prmd), "=r"(prev->tss.reg01), "=r"(prev->tss.reg04), "=r"(prev->tss.reg05), "=r"(prev->tss.reg02), "=r"(prev->tss.reg03)
+		: "r"(next->tss.csr_prmd), "r"(next->tss.reg01), "r"(next->tss.reg04), "r"(next->tss.reg05), "r"(next->tss.reg02), "r"(next->tss.reg03)
+		: "memory"
+	);
+	// asm volatile("csrrd %0, 0x0\n" : "=r"(prev->tss.csr_prmd));
+	// asm volatile("add.d %0, ra, r0\n" : "=r"(prev->tss.reg01));
+	// //保存当前进程的a0-a1
+	// asm volatile("add.d %0, a0, r0\n" : "=r"(prev->tss.reg04));
+	// asm volatile("add.d %0, a1, r0\n" : "=r"(prev->tss.reg05));
+	// //保存当前进程的tp
+	// asm volatile("add.d %0, tp, r0\n" : "=r"(prev->tss.reg02));
+	// //保存当前进程的sp
+	// asm volatile("add.d %0, sp, r0\n" : "=r"(prev->tss.reg03));
 
-	//恢复下一个进程的prmd, ra
-	asm volatile("csrrw 0x0, %0\n" : : "r"(next->tss.csr_prmd));
-	asm volatile("add.d ra, %0, r0\n" : : "r"(next->tss.reg01));
-	//恢复下一个进程的a0-a1
-	asm volatile("add.d a0, %0, r0\n" : : "r"(next->tss.reg04));
-	asm volatile("add.d a1, %0, r0\n" : : "r"(next->tss.reg05));
-	//恢复下一个进程的tp
-	asm volatile("add.d tp, %0, r0\n" : : "r"(next->tss.reg02));
-	//恢复下一个进程的sp
-	asm volatile("add.d sp, %0, r0\n" : : "r"(next->tss.reg03));
+	// //恢复下一个进程的prmd, ra
+	// asm volatile("csrrw 0x0, %0\n" : : "r"(next->tss.csr_prmd));
+	// asm volatile("add.d ra, %0, r0\n" : : "r"(next->tss.reg01));
+	// //恢复下一个进程的a0-a1
+	// asm volatile("add.d a0, %0, r0\n" : : "r"(next->tss.reg04));
+	// asm volatile("add.d a1, %0, r0\n" : : "r"(next->tss.reg05));
+	// //恢复下一个进程的tp
+	// asm volatile("add.d tp, %0, r0\n" : : "r"(next->tss.reg02));
+	// //恢复下一个进程的sp
+	// asm volatile("add.d sp, %0, r0\n" : : "r"(next->tss.reg03));
 
-	asm volatile("jr ra\n");
+	// asm volatile("jr ra\n");
 
 	// 	"csrrd	t1, 0x0\n" // save prmd
 	// 	"stptr.d	t1, a0, THREAD_CSRPRMD\n" // save prmd

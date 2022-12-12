@@ -4,6 +4,7 @@
 #include "cpu/ls7a.h"
 #include "drivers/kbd.h"
 #include "shell/shell.h"
+#include "sched/sched.h"
 
 //extern void trap_entry(void);
 
@@ -21,12 +22,21 @@ extern int kbd_has_data(void);
 
 void timer_interrupt(void)
 {
+    //键盘补丁
     while (kbd_has_data()){
         kbd_read_byte();
     }
-    //printf("timer interrupt\n");
+
+    //计时器
     time_n += 1;
-    /* ack */
+
+    //滴答数
+    jiffies += 1;
+
+    //调度
+    do_schedule();
+
+    //清除中断
     w_csr_ticlr(r_csr_ticlr() | CSR_TICLR_CLR);
 }
 
@@ -44,6 +54,14 @@ void mouse_interrupt(void)
     //printf("mouse interrupt\n");
 }
 
+void save_r(){
+    
+}
+
+void resore_r(){
+
+}
+
 void trap_entry(){
     asm volatile(
         "        addi.d $sp, $sp, -256\n"
@@ -58,60 +76,64 @@ void trap_entry(){
         "        st.d $a5, $sp, 64\n"
         "        st.d $a6, $sp, 72\n"
         "        st.d $a7, $sp, 80\n"
-        "        st.d $t0, $sp, 88\n"
-        "        st.d $t1, $sp, 96\n"
-        "        st.d $t2, $sp, 104\n"
-        "        st.d $t3, $sp, 112\n"
-        "        st.d $t4, $sp, 120\n"
-        "        st.d $t5, $sp, 128\n"
-        "        st.d $t6, $sp, 136\n"
-        "        st.d $t7, $sp, 144\n"
-        "        st.d $t8, $sp, 152\n"
-        "        st.d $r21, $sp,160\n"
-        "        st.d $fp, $sp, 168\n"
-        "        st.d $s0, $sp, 176\n"
-        "        st.d $s1, $sp, 184\n"
-        "        st.d $s2, $sp, 192\n"
-        "        st.d $s3, $sp, 200\n"
-        "        st.d $s4, $sp, 208\n"
-        "        st.d $s5, $sp, 216\n"
-        "        st.d $s6, $sp, 224\n"
-        "        st.d $s7, $sp, 232\n"
-        "        st.d $s8, $sp, 240\n"
+        "        st.d $v0, $sp, 88\n"
+        "        st.d $v1, $sp, 96\n"
+        "        st.d $t0, $sp, 104\n"
+        "        st.d $t1, $sp, 112\n"
+        "        st.d $t2, $sp, 120\n"
+        "        st.d $t3, $sp, 128\n"
+        "        st.d $t4, $sp, 136\n"
+        "        st.d $t5, $sp, 144\n"
+        "        st.d $t6, $sp, 152\n"
+        "        st.d $t7, $sp, 160\n"
+        "        st.d $t8, $sp, 168\n"
+        "        st.d $r21, $sp,176\n"
+        "        st.d $fp, $sp, 184\n"
+        "        st.d $s0, $sp, 192\n"
+        "        st.d $s1, $sp, 200\n"
+        "        st.d $s2, $sp, 208\n"
+        "        st.d $s3, $sp, 216\n"
+        "        st.d $s4, $sp, 224\n"
+        "        st.d $s5, $sp, 232\n"
+        "        st.d $s6, $sp, 240\n"
+        "        st.d $s7, $sp, 248\n"
+        "        st.d $s8, $sp, 256\n"
         "        bl trap_handler\n"
-        "        ld.d $ra, $sp, 0\n"
-        "        ld.d $tp, $sp, 8\n"
-        "        ld.d $sp, $sp, 16\n"
-        "        ld.d $a0, $sp, 24\n"
-        "        ld.d $a1, $sp, 32\n"
-        "        ld.d $a2, $sp, 40\n"
-        "        ld.d $a3, $sp, 48\n"
-        "        ld.d $a4, $sp, 56\n"
-        "        ld.d $a5, $sp, 64\n"
-        "        ld.d $a6, $sp, 72\n"
+        "        ld.d $s8, $sp, 256\n"
+        "        ld.d $s7, $sp, 248\n"
+        "        ld.d $s6, $sp, 240\n"
+        "        ld.d $s5, $sp, 232\n"
+        "        ld.d $s4, $sp, 224\n"
+        "        ld.d $s3, $sp, 216\n"
+        "        ld.d $s2, $sp, 208\n"
+        "        ld.d $s1, $sp, 200\n"
+        "        ld.d $s0, $sp, 192\n"
+        "        ld.d $fp, $sp, 184\n"
+        "        ld.d $r21, $sp,176\n"
+        "        ld.d $t8, $sp, 168\n"
+        "        ld.d $t7, $sp, 160\n"
+        "        ld.d $t6, $sp, 152\n"
+        "        ld.d $t5, $sp, 144\n"
+        "        ld.d $t4, $sp, 136\n"
+        "        ld.d $t3, $sp, 128\n"
+        "        ld.d $t2, $sp, 120\n"
+        "        ld.d $t1, $sp, 112\n"
+        "        ld.d $t0, $sp, 104\n"
+        "        ld.d $v1, $sp, 96\n"
+        "        ld.d $v0, $sp, 88\n"
         "        ld.d $a7, $sp, 80\n"
-        "        ld.d $t0, $sp, 88\n"
-        "        ld.d $t1, $sp, 96\n"
-        "        ld.d $t2, $sp, 104\n"
-        "        ld.d $t3, $sp, 112\n"
-        "        ld.d $t4, $sp, 120\n"
-        "        ld.d $t5, $sp, 128\n"
-        "        ld.d $t6, $sp, 136\n"
-        "        ld.d $t7, $sp, 144\n"
-        "        ld.d $t8, $sp, 152\n"
-        "        ld.d $r21, $sp,160\n"
-        "        ld.d $fp, $sp, 168\n"
-        "        ld.d $s0, $sp, 176\n"
-        "        ld.d $s1, $sp, 184\n"
-        "        ld.d $s2, $sp, 192\n"
-        "        ld.d $s3, $sp, 200\n"
-        "        ld.d $s4, $sp, 208\n"
-        "        ld.d $s5, $sp, 216\n"
-        "        ld.d $s6, $sp, 224\n"
-        "        ld.d $s7, $sp, 232\n"
-        "        ld.d $s8, $sp, 240\n"
+        "        ld.d $a6, $sp, 72\n"
+        "        ld.d $a5, $sp, 64\n"
+        "        ld.d $a4, $sp, 56\n"
+        "        ld.d $a3, $sp, 48\n"
+        "        ld.d $a2, $sp, 40\n"
+        "        ld.d $a1, $sp, 32\n"
+        "        ld.d $a0, $sp, 24\n"
+        "        ld.d $sp, $sp, 16\n"
+        "        ld.d $tp, $sp, 8\n"
+        "        ld.d $ra, $sp, 0\n"
         "        addi.d $sp, $sp, 256\n"
-        "        ertn\n" 
+        "        ertn\n"
     : : : );
 }
 
@@ -183,6 +205,4 @@ void trap_init(void)
     extioi_init(); //拓展io中断初始化
     ls7a_intc_init(); //桥片初始化
     i8042_init(); //键鼠控制芯片初始化
-
-    intr_on(); //开中断
 }

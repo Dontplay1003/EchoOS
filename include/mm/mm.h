@@ -1,3 +1,7 @@
+#include "types.h"
+#include "utils/mem.h"
+#include "utils/string.h"
+
 #ifndef _MM_H_
 #define _MM_H_
 
@@ -18,10 +22,6 @@
 
 #define MAX_ORDER       18  // 2^19 = 512 Pages = 2GB
 
-#include "types.h"
-#include "utils/mem.h"
-#include "utils/string.h"
-
 #ifndef __PRINTF_H__
 #define __PRINTF_H__
 
@@ -29,26 +29,14 @@
 
 #endif // __PRINTF_H__
 
-#define mm_info(fmt, ...) \
-    printf("[MM] | INFO | ");    \
-    printf(fmt, ##__VA_ARGS__);  \
-    printf("\n");
+#define mm_info(fmt, ...) pr_info(MM, fmt, ##__VA_ARGS__)
 
-#define mm_warn(fmt, ...) \
-    printf("[MM] | WARN | ");   \
-    printf(fmt, ##__VA_ARGS__); \
-    printf("\n");
+#define mm_warn(fmt, ...) pr_warn(MM, fmt, ##__VA_ARGS__)
 
-#define mm_error(fmt, ...) \
-    printf("[MM] | ERROR | ");  \
-    printf(fmt, ##__VA_ARGS__); \
-    printf("\n");
+#define mm_error(fmt, ...) pr_error(MM, fmt, ##__VA_ARGS__)
 
 #ifdef _ECHO_DEBUG_
-#define mm_debug(fmt, ...) \
-    printf("[MM] | DEBUG | ");  \
-    printf(fmt, ##__VA_ARGS__); \
-    printf("\n");
+#define mm_debug(fmt, ...) pr_debug(MM, fmt, ##__VA_ARGS__)
 
 #else
 #define mm_debug(fmt, ...)
@@ -59,7 +47,5 @@ void mem_init();
 
 void set_dead_beef(void *addr);
 int check_dead_beef(void *addr);
-
-
 
 #endif  /* !_MM_H_ */

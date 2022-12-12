@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __FS_H_
+#define __FS_H_
+
 #define DISK_INFO_BASE 0x120000000
 #define FILE_INFO_BASE 0x122000000
 #define FILE_BASE      0x124000000
@@ -29,3 +31,5 @@ void *path_als(char path[],int type);
 void move_file(char dst[],char src[]);
 void move_folder(char dst[],char src[]);
 void fs_init();
+
+#endif

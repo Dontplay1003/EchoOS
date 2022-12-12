@@ -1,6 +1,4 @@
 #include "mm/sys_heap.h"
-#include "utils/mem.h"
-#include "utils/string.h"
 
 byte sys_heap[SYS_HEAP_SIZE];
 
@@ -65,4 +63,24 @@ void *sys_heap_memalign(unsigned int size, unsigned int align)
         return NULL;
     void *aligned_addr = (void *)(((u64)addr + align) & ~(align - 1));
     return aligned_addr;
+}
+
+void sys_heap_print_usage()
+{
+    int used = 0;
+    int free = 0;
+    for (int i = 0; i < sys_heap_bitmap_size; i++)
+    {
+        byte b = sys_heap_bitmap[i];
+        for (int j = 0; j < 8; j++)
+        {
+            if (b & 1)
+                used++;
+            else
+                free++;
+            b >>= 1;
+        }
+    }
+    mm_info("System heap usage: %d bytes used, %d bytes free.", used, free);
+    print_bitmap(sys_heap_bitmap, sys_heap_bitmap_size);
 }

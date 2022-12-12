@@ -1,3 +1,6 @@
+#ifndef __SHELL_H_
+#define __SHELL_H_
+
 #include "boot/boot_param.h"
 
 #define SHELL_BUF_SIZE 2048
@@ -9,3 +12,5 @@ void show_help();
 void shell_buf_update(char c, int state, int kbd_n);
 int handle_cmd(int a0, char **args, struct bootparamsinterface *a2);
 void entry_shell(int a0, char **args, struct bootparamsinterface *a2);
+
+#endif

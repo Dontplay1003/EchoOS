@@ -12,6 +12,9 @@
  * License.  See the file "COPYING" in the main directory of this archive
  * for more details.
  */
+#ifndef __KBDMAP_H_
+#define __KBDMAP_H_
+
 #define KEY_RESERVED    0
 #define KEY_ESC			1
 #define KEY_1			2
@@ -285,3 +288,5 @@
 extern unsigned int keymap[512];
 extern char kbd_US[128];
 extern char kbd_US_up[128];
+
+#endif

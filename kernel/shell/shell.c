@@ -9,6 +9,8 @@
 #include "boot/boot_param.h"
 #include "fs/fs.h"
 #include "app/vim.h"
+#include "config/info.h"
+#include "sched/sched.h"
 
 int enable_shell = 0;
 int handle_cmd_flag = 0;
@@ -50,6 +52,21 @@ void shell_buf_update(char c, int state, int kbd_n){
             shell_buf_end_ptr--;
             shell_buf_end_ptr %= SHELL_BUF_SIZE;
         }
+    }
+}
+
+//调度测试函数1
+void test_sched1(){
+    int i = 0;
+    while(1){
+        printf("test_sched1:%d\n",i++);
+    }
+}
+//调度测试函数2
+void test_sched2(){
+    int i = 0;
+    while(1){
+        printf("test_sched2:%d\n",i++);
     }
 }
 
@@ -218,6 +235,25 @@ int handle_cmd(int a0, char **args, struct bootparamsinterface *a2){
         handle_cmd_flag = 0;
         return 1;
     }
+    //并行进程调度测试
+    else if(strcmp(cmd,"test_sched") == 0){
+        int i;
+        int pid1 = fork();
+        //修改tr到测试函数1
+        //task[pid1]->tss.reg01 = test_sched1;
+        task[pid1]->tss.reg01 = test_sched1;
+        //修改进程1的优先级
+        task[pid1]->priority = 1;
+        task[pid1]->counter = task[pid1]->priority;
+
+        int pid2 = fork();
+        //修改tr到测试函数2
+        //task[pid2]->tss.reg01 = test_sched2;
+        task[pid2]->tss.reg01 = test_sched2;
+        //修改进程2的优先级
+        task[pid2]->priority = 2;
+        task[pid2]->counter = task[pid2]->priority;
+    }
     else{
         printf("No such command!\n");
         handle_cmd_flag = 0;
@@ -225,12 +261,19 @@ int handle_cmd(int a0, char **args, struct bootparamsinterface *a2){
     }
 }
 
+
+
 void entry_shell(int a0, char **args, struct bootparamsinterface *a2){
     enable_shell = 1;
     for(int i =0;i<SHELL_BUF_SIZE;i++){
         shell_buf[i]=0;
     }
     kbd_event_register(shell_buf_update);
+
+    print_info(); //打印系统logo以及信息
+
+    intr_on(); //开中断
+
     while (1)
     {
         printf("EchoOS:%s $ ",shell_path);

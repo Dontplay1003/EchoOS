@@ -1,4 +1,3 @@
-#pragma once
 #ifndef __ECHO_OS_serial_h_
 #define __ECHO_OS_serial_h_
 

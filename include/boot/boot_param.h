@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /* copied from linux source */
-#ifndef __ASM_BOOT_PARAM_H_
-#define __ASM_BOOT_PARAM_H_
+#ifndef __BOOT_PARAM_H_
+#define __BOOT_PARAM_H_
 
 #ifdef CONFIG_VT
 #include <linux/screen_info.h>

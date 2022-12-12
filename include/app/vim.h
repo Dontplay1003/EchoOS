@@ -1,3 +1,6 @@
+#ifndef __VIM_H_
+#define __VIM_H_
+
 #include "fs/fs.h"
 
 #define WIN_X 79
@@ -14,3 +17,5 @@ void create_copy();
 void vim_input_handle(char c, int state, int kbd_n);
 
 int vim_entry(struct file_folder *relative_path, char *file_name);
+
+#endif

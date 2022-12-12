@@ -1,3 +1,6 @@
+#ifndef __KBD_H_
+#define __KBD_H_
+
 #include "drivers/kbdmap.h"
 
 //#define KBD_BUF_SIZE 2048
@@ -16,3 +19,5 @@ enum{
 int kbd_event_register(void *f_entry);
 int kbd_event_invoke(char issue_c, int key_state, int kbd_n);
 unsigned char kbd_irq();
+
+#endif

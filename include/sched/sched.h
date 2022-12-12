@@ -11,6 +11,7 @@
 //#include <linux/fs.h>		// 文件系统头文件。定义文件表结构（file,buffer_head,m_inode 等）。
 #include "mm/mm.h"		// 内存管理头文件。含有页面大小定义和一些页面释放函数原型。
 #include "sched/signal.h"		// 信号头文件。定义信号符号常量，信号结构以及信号操作函数原型。
+#include "arch/loongarch.h"
 
 // 这里定义了进程运行可能处的状态。
 #define TASK_RUNNING 0		// 进程正在运行或已准备就绪。
@@ -263,46 +264,6 @@ extern void panic (const char *str);
 extern int tty_write (unsigned minor, char *buf, int count);
 
 //extern _inline void switch_to(int n) 
-void switch_to(struct task_struct *prev, struct task_struct *next)
-{
-	//__switch_to(prev, next);
-	//保存当前进程的prmd, ra
-	asm volatile("csrrd %0, 0x0\n" : "=r"(prev->tss.csr_prmd));
-	asm volatile("move %0, ra\n" : "=r"(prev->tss.reg01));
-	//保存当前进程的a0-a1
-	asm volatile("move %0, a0\n" : "=r"(prev->tss.reg04));
-	asm volatile("move %0, a1\n" : "=r"(prev->tss.reg05));
-	//保存当前进程的tp
-	asm volatile("move %0, tp\n" : "=r"(prev->tss.reg02));
-	//保存当前进程的sp
-	asm volatile("move %0, sp\n" : "=r"(prev->tss.reg03));
-
-	//恢复下一个进程的prmd, ra
-	asm volatile("csrrw 0x0, %0\n" : : "r"(next->tss.csr_prmd));
-	asm volatile("move ra, %0\n" : : "r"(next->tss.reg01));
-	//恢复下一个进程的a0-a1
-	asm volatile("move a0, %0\n" : : "r"(next->tss.reg04));
-	asm volatile("move a1, %0\n" : : "r"(next->tss.reg05));
-	//恢复下一个进程的tp
-	asm volatile("move tp, %0\n" : : "r"(next->tss.reg02));
-	//恢复下一个进程的sp
-	asm volatile("move sp, %0\n" : : "r"(next->tss.reg03));
-
-	asm volatile("jr ra\n");
-
-	// 	"csrrd	t1, 0x0\n" // save prmd
-	// 	"stptr.d	t1, a0, THREAD_CSRPRMD\n" // save prmd
-	// 	"cpu_save_nonscratch a0\n" // save a0-a1
-	// 	"stptr.d	ra, a0, THREAD_REG01\n" // save ra
-	// 	"move	tp, a2\n" // save tp
-	// 	"cpu_restore_nonscratch a1\n" // restore a0-a1
-	// 	"li.w	t0, _THREAD_SIZE - 32\n" // t0 = THREAD_SIZE - 32
-	// 	"PTR_ADDU	t0, t0, tp\n" // t0 = tp + THREAD_SIZE - 32
-	// 	"set_saved_sp	t0, t1, t2\n" // t1 = t0 + 32
-	// 	"ldptr.d	t1, a1, THREAD_CSRPRMD\n" // load prmd
-	// 	"csrwr	t1, LOONGARCH_CSR_PRMD\n" // load prmd
-	// 	"jr	ra\n"
-	// );
-}
+extern void switch_to(struct task_struct *prev, struct task_struct *next);
 
 #endif

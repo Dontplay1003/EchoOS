@@ -13,6 +13,8 @@
 #include "head.h"		// 内核头文件。含有一些内核常用函数的原形定义。
 #include "system.h"		// 系统头文件。定义了设置或修改描述符/中断门等的嵌入式汇编宏。
 #include "mm/mm.h"		// 内存管理头文件。定义了页面大小和页面掩码等。
+#include <larchintrin.h>
+#include "arch/loongarch.h"
 
 #define _S(nr) (1<<((nr)-1))	// 取信号nr 在信号位图中对应位的二进制数值。信号编号1-32。
 // 比如信号5 的位图数值 = 1<<(5-1) = 16 = 00010000b。
@@ -26,11 +28,11 @@ void show_task (int nr, struct task_struct *p)
 {
 	int i, j = 4096 - sizeof (struct task_struct);
 
-	printk ("%d: pid=%d, state=%d, ", nr, p->pid, p->state);
+	printf ("%d: pid=%d, state=%d, ", nr, p->pid, p->state);
 	i = 0;
 	while (i < j && !((char *) (p + 1))[i])	// 检测指定任务数据结构以后等于0 的字节数。
 		i++;
-	printk ("%d (of %d) chars free in kernel stack\n\r", i, j);
+	printf ("%d (of %d) chars free in kernel stack\n\r", i, j);
 }
  
 // 显示所有任务的任务号、进程号、进程状态和内核堆栈空闲字节数（大约）。
@@ -218,6 +220,53 @@ void do_schedule()
 		current->counter = current->priority;	// 否则重新设置进程运行时间片。
 		schedule ();
 	}
+}
+
+void switch_to(struct task_struct *prev, struct task_struct *next)
+{
+	//__switch_to(prev, next);
+	//保存当前进程的prmd, ra
+	asm volatile(
+		"csrrd %0, 0x0\n" 
+		"add.d %0, ra, r0\n"
+		
+	: "=r"(prev->tss.csr_prmd));
+	asm volatile("csrrd %0, 0x0\n" : "=r"(prev->tss.csr_prmd));
+	asm volatile("add.d %0, ra, r0\n" : "=r"(prev->tss.reg01));
+	//保存当前进程的a0-a1
+	asm volatile("add.d %0, a0, r0\n" : "=r"(prev->tss.reg04));
+	asm volatile("add.d %0, a1, r0\n" : "=r"(prev->tss.reg05));
+	//保存当前进程的tp
+	asm volatile("add.d %0, tp, r0\n" : "=r"(prev->tss.reg02));
+	//保存当前进程的sp
+	asm volatile("add.d %0, sp, r0\n" : "=r"(prev->tss.reg03));
+
+	//恢复下一个进程的prmd, ra
+	asm volatile("csrrw 0x0, %0\n" : : "r"(next->tss.csr_prmd));
+	asm volatile("add.d ra, %0, r0\n" : : "r"(next->tss.reg01));
+	//恢复下一个进程的a0-a1
+	asm volatile("add.d a0, %0, r0\n" : : "r"(next->tss.reg04));
+	asm volatile("add.d a1, %0, r0\n" : : "r"(next->tss.reg05));
+	//恢复下一个进程的tp
+	asm volatile("add.d tp, %0, r0\n" : : "r"(next->tss.reg02));
+	//恢复下一个进程的sp
+	asm volatile("add.d sp, %0, r0\n" : : "r"(next->tss.reg03));
+
+	asm volatile("jr ra\n");
+
+	// 	"csrrd	t1, 0x0\n" // save prmd
+	// 	"stptr.d	t1, a0, THREAD_CSRPRMD\n" // save prmd
+	// 	"cpu_save_nonscratch a0\n" // save a0-a1
+	// 	"stptr.d	ra, a0, THREAD_REG01\n" // save ra
+	// 	"move	tp, a2\n" // save tp
+	// 	"cpu_restore_nonscratch a1\n" // restore a0-a1
+	// 	"li.w	t0, _THREAD_SIZE - 32\n" // t0 = THREAD_SIZE - 32
+	// 	"PTR_ADDU	t0, t0, tp\n" // t0 = tp + THREAD_SIZE - 32
+	// 	"set_saved_sp	t0, t1, t2\n" // t1 = t0 + 32
+	// 	"ldptr.d	t1, a1, THREAD_CSRPRMD\n" // load prmd
+	// 	"csrwr	t1, LOONGARCH_CSR_PRMD\n" // load prmd
+	// 	"jr	ra\n"
+	// );
 }
 
 // 取当前进程号pid。

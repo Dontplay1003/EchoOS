@@ -50,6 +50,7 @@ struct loongarch_fpu {
 struct thread_struct {
 	/* Saved main processor registers. */
 	unsigned long reg01, reg02, reg03, reg22; /* ra tp sp fp */
+	unsigned long reg04, reg05, reg06, reg07; /* a0-a3 */
 	unsigned long reg23, reg24, reg25, reg26; /* s0-s3 */
 	unsigned long reg27, reg28, reg29, reg30, reg31; /* s4-s8 */
 
@@ -88,6 +89,10 @@ struct thread_struct {
 	.reg01			= 0,				\
 	.reg02			= 0,				\
 	.reg03			= 0,				\
+	.reg04			= 0,				\
+	.reg05			= 0,				\
+	.reg06			= 0,				\
+	.reg07			= 0,				\
 	.reg22			= 0,				\
 	.reg23			= 0,				\
 	.reg24			= 0,				\

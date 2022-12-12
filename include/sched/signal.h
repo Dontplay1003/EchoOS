@@ -73,7 +73,7 @@ void (*signal (int _sig, void (*_func) (int))) (int);
 // 向当前进程发送一个信号。其作用等价于kill(getpid(),sig)。
 int raise (int sig);
 // 可用于向任何进程组或进程发送任何信号。
-int kill (pid_t pid, int sig);
+//int kill (pid_t pid, int sig);
 // 向信号集中添加信号。
 int sigaddset (sigset_t * mask, int signo);
 // 从信号集中去除指定的信号。

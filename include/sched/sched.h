@@ -258,9 +258,9 @@ extern void panic (const char *str);
 extern int tty_write (unsigned minor, char *buf, int count);
 
 //extern _inline void switch_to(int n) 
-void switch_to(int n) 
+void switch_to(struct task_struct *prev, struct task_struct *next)
 {
-	__switch_to();
+	__switch_to(prev, next);
 }
 
 #endif

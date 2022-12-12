@@ -1,5 +1,5 @@
-#include "cpu/loongarch.h"
-#include "cpu/ls7a.h"
+#include "arch/loongarch.h"
+#include "arch/ls7a.h"
 
 //
 // the loongarch 7A1000 I/O Interrupt Controller Registers.

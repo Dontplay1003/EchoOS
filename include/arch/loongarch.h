@@ -39,7 +39,7 @@ static inline unsigned int r_csr_prmd()
 
 static inline void w_csr_prmd(unsigned int x)   
 {
-  asm volatile("csrwr %0, 0x1" : : "r" (x));
+  asm ("csrwr %0, 0x1" : : "r" (x));
 }
 
 static inline unsigned long r_csr_era()

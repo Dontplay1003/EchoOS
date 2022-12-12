@@ -3,7 +3,7 @@
 #include "utils/mem.h"
 #include "utils/string.h"
 #include "drivers/kbd.h"
-#include "cpu/loongarch.h"
+#include "arch/loongarch.h"
 
 int enable_vim = 0;
 int exit_flag = 0;

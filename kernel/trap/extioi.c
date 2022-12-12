@@ -1,5 +1,5 @@
-#include "cpu/loongarch.h"
-#include "cpu/ls7a.h"
+#include "arch/loongarch.h"
+#include "arch/ls7a.h"
 
 //拓展IO中断使能寄存器/中断路由寄存器/中断目标处理器核路由寄存器地址/中断目标结点映射方式配置
 void extioi_init(void)

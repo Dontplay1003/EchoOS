@@ -10,9 +10,9 @@ static char digits[] = "0123456789abcdef";
 void putc(char c)
 {
   // wait for Transmit Holding Empty to be set in LSR.
-  while ((io_readb(UART0_LSR) & LSR_TX_IDLE) == 0)
+  while ((io_readb() & LSR_TX_IDLE) == 0)
     ;
-  io_writeb(UART0_THR, c);
+  io_writeb(c);
 }
 
 void puts(char *str)
@@ -115,6 +115,6 @@ void printf(char *fmt, ...)
 // char getc()
 // {
 //   // wait for Transmit Holding Empty to be set in LSR.
-//   while ((io_readb(UART0_LSR) & LSR_TX_IDLE) == 0);
-//   return io_readb(UART0_THR);
+//   while ((io_readb() & LSR_TX_IDLE) == 0);
+//   return io_readb();
 // }

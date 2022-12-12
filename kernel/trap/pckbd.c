@@ -1,5 +1,5 @@
-#include "cpu/loongarch.h"
-#include "cpu/ls7a.h"
+#include "arch/loongarch.h"
+#include "arch/ls7a.h"
 #include "sysio/io.h"
 
 #pragma GCC diagnostic ignored "-Warray-bounds"

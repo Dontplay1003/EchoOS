@@ -1,7 +1,7 @@
 #pragma GCC diagnostic ignored "-Wunused-variable" //正式开发建议删除此行
 #include "sysio/io.h"
-#include "cpu/loongarch.h"
-#include "cpu/ls7a.h"
+#include "arch/loongarch.h"
+#include "arch/ls7a.h"
 #include "drivers/kbd.h"
 #include "shell/shell.h"
 #include "sched/sched.h"

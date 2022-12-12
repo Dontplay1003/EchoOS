@@ -26,6 +26,7 @@
 #define __PRINTF_H__
 
 #include "sysio/io.h"
+#include "sysio/kinfo.h"
 
 #endif // __PRINTF_H__
 

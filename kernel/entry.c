@@ -49,7 +49,7 @@ void kernel_entry(int a0, char **args, struct bootparamsinterface *a2)
         return;
     }
 
-    entry_shell();
+    entry_shell(a0,args,a2);
 
     while(1) printf("");
 }

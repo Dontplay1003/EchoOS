@@ -166,16 +166,16 @@ struct thread_struct {
 // ==========================
 */
 
-struct thread_info {
-	struct task_struct	*task;		/* main task structure */
-	unsigned long		flags;		/* low level flags */
-	unsigned long		tp_value;	/* thread pointer */
-	__u32			cpu;		/* current CPU */
-	int			preempt_count;	/* 0 => preemptible, <0 => BUG */
-	struct pt_regs		*regs;
-	unsigned long		syscall;	/* syscall number */
-	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
-};
+// struct thread_info {
+// 	struct task_struct	*task;		/* main task structure */
+// 	unsigned long		flags;		/* low level flags */
+// 	unsigned long		tp_value;	/* thread pointer */
+// 	__u32			cpu;		/* current CPU */
+// 	int			preempt_count;	/* 0 => preemptible, <0 => BUG */
+// 	struct pt_regs		*regs;
+// 	unsigned long		syscall;	/* syscall number */
+// 	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
+// };
 
 struct task_struct
 {
@@ -257,7 +257,10 @@ extern void panic (const char *str);
 // 往tty 上写指定长度的字符串。( kernel/chr_drv/tty_io.c, 290 )。
 extern int tty_write (unsigned minor, char *buf, int count);
 
-extern _inline void switch_to(int n) 
+//extern _inline void switch_to(int n) 
+void switch_to(int n) 
 {
 	__switch_to();
 }
+
+#endif
